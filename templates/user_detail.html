@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h2>User Details</h2>
+    <h3>First Name: {{ user.first_name }}</h3>
+    <h3>Last Name: {{ user.last_name }}</h3>
+    <h3>Email: {{ user.email }}</h3>
+    
+  
+
+    <ul>
+     
+      {% for score in scores %}
+          <li>
+             Date: {{ score.date }}, {{ score.location.address }}, {{ score.score }}
+          </li>
+      {% endfor %}
+    </ul>
+
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h2>Garage Details</h2>
+    <h3>Garage Address: {{ garage.address }}</h3>
+    <h3>Garage Rating: </h3>
+    {% if 'logged_in' in session.keys()%}
+      Please submit the new rating:
+      <form action="/garage_rating" method="POST">
+        <select name="rating">
+          <option label="1">1</option>
+          <option label="2">2</option>
+          <option label="3">3</option>
+          <option label="4">4</option>
+          <option label="5">5</option>
+        </select>
+        <input type="hidden" name="parking_location" value="{{garage.parking_id}}">
+        <input type="hidden" name="user" value="{{session['logged_in']}}">
+        <button type="submit">Select your rating. 5 being best.</button>
+      </form>
+    {% endif %}
+    <ul>
+     
+      {% for rating in garage.rating %}
+          <li>
+              User ID: {{ rating.user_id }}, 
+              User Rating: {{ rating.score }}
+          </li>
+      {% endfor %}
+    </ul>
+
+
+
+{% endblock %}

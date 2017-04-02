@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+  <title>PakerSpace</title>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+
+
+<body>
+  ParkerSpace
+  <hr>
+
+
+  {% with messages = get_flashed_messages() %}
+  	{% if messages %}
+  	<ul class=flashes>
+  	{% for message in messages %}
+  	  <li>{{ message }}</li>
+  	{% endfor %}
+  	</ul>
+  	{% endif %}
+  {% endwith %}
+  {% block login %}
+    {% if 'logged_in' in session.keys() %}
+        <form method="get" action="/log_out">
+            <button type="submit">Logout</button>
+        </form>
+    {% else %}
+        <form method="get" action="/login_form">
+            <button type="submit">Login</button>
+        </form>
+    {% endif %}
+  {% endblock %}
+  {% block content %} 
+  	
+  {% endblock %}
+
+</body>
+</html>

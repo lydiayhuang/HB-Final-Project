@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h2>Garages</h2>
+    <ul>
+      {% for parking_location in parking_locations %}
+          <li>
+              <a href="/garages/{{ parking_location.parking_id }}">
+                {{ parking_location.address}} ({{ parking_location.parking_id }})
+              </a>
+          </li>
+      {% endfor %}
+    </ul>
+
+  
+{% endblock %}
+

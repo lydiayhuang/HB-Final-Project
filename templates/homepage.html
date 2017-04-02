@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container-fluid">
+      <div class="row">
+        <div class="col-xs-3"></div>
+        <div class="col-xs-6">
+          <form>
+  <div class="form-group">
+    <input type="text" class="form-control" id="query" placeholder="Enter Address">
+  </div>
+  <button type="button" id="search" class="btn btn-default">Submit</button>
+</form>
+        </div>
+        <div class="col-xs-3"></div>
+      </div>
+    </div>
+
+<h1>Parker bbbbbSpace</h1>
+
+<h2>Garages</h2>
+<p><a href="/garages">Search All Garages</a></p>
+
+<h2>Users</h2>
+<p><a href="/users">View all users</a></p>
+
+<ul>
+	<li><a href="/login_form">Log in</a></li>
+	<li><a href="/register">Register</a></li>
+</ul>
+
+<div>
+	<ul id="results"></ul>
+
+</div>
+<script>
+	$(document).ready(function(){
+		$('#search').on('click', function(){
+			// calling the api route @ search
+			$.get('/search',{address:$('#query').val()}, function(data){
+				
+				var div = $("#results");
+				div.empty();
+				for(var i=0;i<data.results.length; i++) {
+					div.append("<li>" +  data.results[i] + "</li>");
+				}
+			})
+		});
+	});
+</script>
+
+{% endblock %}
