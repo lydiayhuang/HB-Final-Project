@@ -3,7 +3,7 @@
 
     <h2>Garages</h2>
     <ul>
-      {% for parking_location in parking_locations %}
+      {% for parking_location in garages %}
           <li>
               <a href="/garages/{{ parking_location.parking_id }}">
                 {{ parking_location.address}} ({{ parking_location.parking_id }})

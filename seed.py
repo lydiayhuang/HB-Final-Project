@@ -53,10 +53,10 @@ def add_users():
         for element in data:
 
 
-            email = element['email']
-            password = element['password']
-            first_name = element['first_name']
-            last_name = element['last_name']
+            email = element['email'].strip()
+            password = element['password'].strip()
+            first_name = element['first_name'].strip()
+            last_name = element['last_name'].strip()
  
 
             user = User(email=email, 

@@ -61,14 +61,19 @@ def user_geocode(geocode_dict):
 
 	return user_loc
 
-def closest_garage(garages, user_location, bound=10):
+def closest_garage(garages, user_location, bound=5):
 	closest_garages = []
+	print "THIS IS THE USER LOCATION" 
+	print user_location
 	for garage in garages:
+		print garage
 		garage_location = (garage.latitude, garage.longitude)
-		distance = vincenty(garage_location, user_location).miles
-		if distance < bound:
+		print garage_location
+		dist = distance(garage_location, user_location)
+		print dist
+		if dist < bound:
 			closest_garages.append(garage)
-	return closest_garages
+	return closest_garages[:10]
 
 
 
@@ -76,7 +81,7 @@ def closest_garage(garages, user_location, bound=10):
 
 def get_closest_garage(garages, user_location):
 	# closest = the first garage
-	closest = None
+	closest_garaget = None
 	closest_garage = None
 	for garage, loc in garages.items():
 		location = garages[garage]

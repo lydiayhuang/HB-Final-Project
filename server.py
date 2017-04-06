@@ -2,7 +2,7 @@
 from jinja2 import StrictUndefined
 
 from flask import (Flask, render_template, redirect, request, flash,
-                   session, jsonify)
+                   session, jsonify, Response)
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import User, connect_to_db, db, Parking_location, User_history, Rating
@@ -14,6 +14,9 @@ from geopy.geocoders import Nominatim
 from geopy.distance import vincenty
 
 from helper import closest_garage
+
+import geocoder
+
 
 
 
@@ -39,27 +42,32 @@ def index():
 def user_list():
     """Show list of users."""
 
-    users = User.query.all()
-    return render_template("user_list.html", users=users)
+    user = User.query.all()
+
+    return render_template("user_list.html", user=user)
 
 
-@app.route("/search")
+@app.route("/garages")
 def search_list():
 
     address = request.args.get('address') 
-    print address
-    geolocator = Nominatim()
-    # location = geolocator.geocode("2110 Market St San Francisco")
-    location = geolocator.geocode(address)
-    print((location.latitude, location.longitude))
+    print "Address: ", address 
+    #putting in comma will print since different datatypes cannot be concatenated 
+    location = geocoder.google(address).latlng
+
+    print "Location: ", location
+    print(location[0], location[1])
 
     garages = Parking_location.query.all()
+    print "Garages:", garages
 
-    results = closest_garage(garages, (location.latitude, location.longitude))
+    results = closest_garage(garages, location)
     print(len(results))
+    print "Restuls", results
+    
     garage_data = [garage.address for garage in results]
-    return jsonify(results=garage_data)
-    # return render_template("homepage.html", garages=results)
+    # return jsonify(results=garage_data)
+    return render_template("garage_list.html", garages=results)
 
 
 
@@ -82,7 +90,7 @@ def user_info(user_id):
         score = Rating.query.filter(Rating.user_id == history.user_id).filter(Rating.parking_id== history.parking_id).one()
         rating.append(dict(location=parking_location, date=history.parking_date, score=score.score))
 
-
+    print rating
     return render_template("user_detail.html", 
                                     scores=rating,
                                     user=user
@@ -108,7 +116,8 @@ def add_new_rating():
     parking_id = request.form.get("parking")
     user_id = request.form.get("user")
 
-    existing_rating = (Rating.query.filter(Rating.parking_id ==parking_id                            ,Rating.user_id == user_id).first())
+    existing_rating = (Rating.query.filter(Rating.parking_id ==parking_id,
+                        Rating.user_id == user_id).first())
     if existing_rating:
         flash('You have successfully updated your rating!')
         existing_rating.score = int(rating)
@@ -154,14 +163,17 @@ def register_process():
 
     user = User.query.filter(User.email == email).first()
 
+    scores = []
+
+
     if user is None:       
-        flash("You've created your account!")
+        flash("You've created a new account!")
         new_user = User(email=email, password=password, first_name=first_name, last_name=last_name)
         db.session.add(new_user)
         db.session.commit()
         session['logged_in'] = new_user.user_id
 
-        return render_template("user_detail.html")
+        return render_template("user_detail.html", user=new_user, scores=[])
     else:
         flash("Email existed. Please log in instead.")
         return render_template("login_form.html")
@@ -179,10 +191,12 @@ def process_form():
     """Checks if email and password match."""
 
     email = request.form.get('uemail')
+    print "Email", email
     password = request.form.get('psw')
-
+    print "PSW", password
+    # email = 'phil@phil.com' 
     user = User.query.filter(User.email == email).first()
-
+    print "This is user", user
     # if not user or if user is None:
     if not user:
         flash('Email not recognized, please register for a new account.')
