@@ -14,12 +14,12 @@
           <option label="4">4</option>
           <option label="5">5</option>
         </select>
-        <input type="hidden" name="parking" value="{{garage.parking_id}}">
-        <input type="hidden" name="user" value="{{session['logged_in']}}">
+        <input type="hidden" id="parking" name="parking" value="{{garage.parking_id}}">
+        <input type="hidden" id="user" name="user" value="{{session['logged_in']}}">
         <button type="submit">Select your rating. 5 being best.</button>
       </form>
     {% endif %}
-    <ul>
+    <!-- <ul>
      
       {% for rating in garage.rating %}
           <li>
@@ -27,8 +27,24 @@
               User Rating: {{ rating.score }}
           </li>
       {% endfor %}
-    </ul>
+    </ul> -->
 
+    {% if user_rating %}
+      <h3>User Rating: {{ user_rating }}</h3>
+    {% endif %}
 
+      <h3>Overall Rating: {{ overall_rating }}</h3>
+
+<button id='record'>Record Parking Date</button>
+
+<form action="/record_parking" method="POST">
+  <input type="hidden" id="parking" name="parking_id" value="{{garage.parking_id}}">
+  <input type="hidden" id="user" name="user" value="{{session['logged_in']}}">
+        
+  Parking Date:
+  <input type="date" name="parking_date">
+ 
+  <button type="submit">Submit</button>
+</form>
 
 {% endblock %}

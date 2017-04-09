@@ -20,6 +20,7 @@ import geocoder
 
 
 
+
 app = Flask(__name__, static_url_path='/templates/assets')
 
 # Required to use Flask sessions and the debug toolbar
@@ -136,11 +137,62 @@ def garage_details(parking_id):
     """Show garage details."""
 
     garage = Parking_location.query.filter(Parking_location.parking_id == parking_id).one()
+    user_rating_score = None
 
-    
+    if session['logged_in']:
+        user_rating = Rating.query.filter(Rating.parking_id == garage.parking_id, Rating.user_id == session['logged_in'])
+        if user_rating.count():
+            user_rating_score = user_rating.one().score
 
+    if len(garage.rating):
+        overall_rating = float(sum(rating.score for rating in garage.rating))/len(garage.rating)
+    else:
+        overall_rating = 0
+    # print [rating.score for rating in garage.rating]
     return render_template("garage_details.html", 
-                                    garage=garage) 
+                                    garage=garage,
+                                    overall_rating=overall_rating,
+                                    user_rating=user_rating_score) 
+
+@app.route("/map_data", methods=['GET'])
+def map_data():
+    parking_locations = Parking_location.query.all()
+    data = []
+    for location in parking_locations:
+        coordinates=dict(lat=location.latitude, lng=location.longitude)
+        data.append(dict(id=location.parking_id, coordinates=coordinates))
+    return jsonify(data=data)
+
+
+@app.route("/chart/<user_id>", methods=['GET'])
+def chart(user_id):
+
+    user_histories = User_history.query.filter(User_history.user_id == user_id)
+    #creating array of 12 0's for 12 months
+    data = [0]*12
+    for history in user_histories:
+        month = history.parking_date.month 
+        #index starts from 0 so we are subtracting 1
+        data[month-1]+= 1
+        # print history.parking_date
+    return jsonify(data=data)
+
+
+@app.route("/record_parking", methods=['POST'])
+def record_parking():
+    """records parking date"""
+
+    date = request.form.get("parking_date")
+    parking_id = request.form.get("parking_id")
+    user_id = request.form.get("user")
+
+    new_history = User_history(parking_id=parking_id, parking_date=date, user_id=user_id)
+    db.session.add(new_history)
+    db.session.commit()
+
+    # print date, parking_id, user_id
+    return redirect('/users/' + str(user_id))
+
 
 
 

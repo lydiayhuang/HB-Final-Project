@@ -8,7 +8,14 @@
     
   
 
-    <ul>
+   
+<!--   <input type="date"/>
+ --> 
+ <div style="width: 400px; height: 400px">
+  <canvas id="myChart" width="400" height="400"></canvas>
+</div>
+
+ <ul>
      
       {% for score in scores %}
           <li>
@@ -17,4 +24,53 @@
       {% endfor %}
     </ul>
 
+    
+ <script type="text/javascript">
+  var user_id = {{ user.user_id }}
+  
+
+  
+$.get('/chart/' + user_id, function(chartData){
+  var data = {
+      labels: ["January", "February", "March", "April", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"],
+      datasets: [
+          {
+              label: "My First dataset",
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(255, 206, 86, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                  'rgba(255,99,132,1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)'
+              ],
+              borderWidth: 1,
+              data: chartData.data,
+          }
+      ]
+  };
+  
+  var myBarChart = new Chart("myChart", {
+    type: 'bar',
+    data: data,
+    options:  {}  
+    
+  });
+
+})
+
+ </script>
+
+
 {% endblock %}
+
+
+
