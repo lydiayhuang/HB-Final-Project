@@ -35,7 +35,7 @@
 
       <h3>Overall Rating: {{ overall_rating }}</h3>
 
-<button id='record'>Record Parking Date</button>
+<!-- <button id='record'>Record Parking Date</button> -->
 
 <form action="/record_parking" method="POST">
   <input type="hidden" id="parking" name="parking_id" value="{{garage.parking_id}}">
@@ -45,6 +45,11 @@
   <input type="date" name="parking_date">
  
   <button type="submit">Submit</button>
+
+  
+
 </form>
+
+<a href="https://maps.google.com/?daddr={{garage.latitude}},{{garage.longitude}}" target="blank"><button>Directions</button></a>
 
 {% endblock %}

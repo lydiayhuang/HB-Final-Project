@@ -72,6 +72,7 @@ def closest_garage(garages, user_location, bound=5):
 		dist = distance(garage_location, user_location)
 		print dist
 		if dist < bound:
+			garage.dist = dist
 			closest_garages.append(garage)
 	return closest_garages[:10]
 

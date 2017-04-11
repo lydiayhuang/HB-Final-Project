@@ -98,15 +98,15 @@ def user_info(user_id):
                                     )
 
 
-@app.route("/garages")
-def garage_list():
-    """Show list of garages."""
+# @app.route("/garages")
+# def garage_list():
+#     """Show list of garages."""
 
-    print "About to query for parking location"
-    parking_locations = Parking_location.query.all()
+#     print "About to query for parking location"
+#     parking_locations = Parking_location.query.all()
     
-    print "about to render template"
-    return render_template("garage_list.html", parking_locations=parking_locations)
+#     print "about to render template"
+#     return render_template("garage_list.html", parking_locations=parking_locations)
 
 
 

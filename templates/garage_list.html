@@ -10,8 +10,10 @@
       {% for parking_location in garages %}
           <li>
               <a href="/garages/{{ parking_location.parking_id }}">
-                {{ parking_location.address}} ({{ parking_location.parking_id }})
+                {{ parking_location.address}} ({{ parking_location.parking_id }}) 
               </a>
+              {{ '%0.2f'| format(parking_location.dist|float) }} miles
+
           </li>
       {% endfor %}
     </ul>
@@ -21,8 +23,8 @@
       function initMap() {
         // Styles a map in night mode.
         var map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: 40.674, lng: -73.945},
-          zoom: 12,
+          center: {lat: 37.774, lng: -122.4194},
+          zoom: 13,
           styles: [
             {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
             {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
@@ -105,18 +107,21 @@
           ]
         });
       
-      $.get("/map_data", function(data){
-        for (var i = 0; i < data.data.length; i++) {
-
-          var marker = new google.maps.Marker({
-            position: data.data[i].coordinates,
+      {% for garage in garages %}
+      var marker = new google.maps.Marker({
+            position: {lat:{{garage.latitude}}, lng:{{garage.longitude}} },
             map: map,
-            title: 'Hello World!'
+            title: '{{garage.address}}'
           });
-        }
-      })
+      {% endfor %}
+      }
 
-      
+      function clearMarkers() {
+        setMapOnAll(null);
+      }
+
+      function updateMarkers () {
+        
       }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCtbTBgDnd4FKa6iOlY8FDO3u1R94sItZc&callback=initMap"
