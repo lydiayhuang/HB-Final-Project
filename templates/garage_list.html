@@ -4,7 +4,14 @@
     <h2>Garages</h2>
 
 <!--     <iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d12611.974921443496!2d-122.40708325!3d37.7901867!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1491619231395" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe> -->
-<div id="map" style="height: 800px;width=600px;"></div>
+
+
+
+<div class="row">
+  <div class="col-md-10">
+    <div id="map" style="height: 800px;width=600px;"></div>
+  </div>
+  <div class="col-md-2">
 
     <ul>
       {% for parking_location in garages %}
@@ -18,6 +25,9 @@
       {% endfor %}
     </ul>
 
+  </div>
+</div>
+
 <script>
   // var test = {{garages|safe}}
       function initMap() {
@@ -25,6 +35,10 @@
         var map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 37.774, lng: -122.4194},
           zoom: 13,
+          scrollwheel: false,
+          zoomControl: true,
+          scaleControl: false,
+          draggable: false,
           styles: [
             {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
             {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},

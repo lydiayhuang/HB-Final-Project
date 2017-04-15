@@ -1,64 +1,88 @@
 {% extends 'base.html' %}
 {% block content %}
-
-<div class="container-fluid">
-      <div class="row">
-        <div class="col-xs-3"></div>
-        <div class="col-xs-20">
-
-		 <form action="/garages">
-		  <div class="form-group">
-		    <input type="text" name="address" class="form-control" id="query" placeholder="Enter Address">
-		  </div>
-		  <!-- <button type="button" id="search" class="btn btn-default">Submit</button> -->
-		    <input type="submit" value="search">
-
-		</form>
-
-		<div class="jumbotron">
-  			<h1>Hello, world!</h1>
-  			<p>...</p>
-  			<p><a id="search-button" class="btn btn-primary btn-lg" href="#" role="button">Search</a></p>
-		</div>
-
+  <script>
+  function validateForm() {
+  var address = $("#search-bar").val();
+  if (address == "") {
+  alert("Address must be filled out");
+  return false;
+  }
+  }
+  </script>
+  <style>
+  body {
+  background-image: url("https://photos.smugmug.com/Portfolio/365-Project/i-hKjBcKn/1/X2/Parking%20Garage%20at%20the%20End%20of%20the%20World-X2.jpg");
+  background-size: 100% 1000px;
+  background-repeat: no-repeat;
+  }
+  </style>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-2"></div>
+      <div class="col-xs-8">
+        <div class="jumbotron">
+          <h1>Parker SF</h1>
+          <p>Takes you where you need to go.</p>
+          <form action="/garages" onsubmit="return validateForm()">
+            <div class="form-group">
+              <input id="search-bar" type="text" name="address" class="form-control" input-lg id="query" placeholder="Enter Address">
+            </div>
+            <input id="search-button" type="submit" value="Search" class="btn btn-primary btn-lg">
+          </form>
         </div>
-        <div class="col-xs-3"></div>
-      </div>
     </div>
+    
+    <!-- Modal -->
+    <!-- <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Login Form</h4>
+          </div> -->
+          
+          <!--  <h2>Login Form</h2> -->
+          <!-- <form action="/login_form" method="POST">
+            <div class="modal-body">
+              <label><b>Email</b></label>
+              <input type="email" placeholder="Enter Email" name="uemail" required>
+              <label><b>Password</b></label>
+              <input type="password" placeholder="Enter Password" name="psw" required>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <input id="login" class="btn btn-primary" type="submit" value="Login">
+              
+            </div>
+          </form>
+        </div>
+      </div>
+    </div> -->
 
-<h1>ParkerSpace</h1>
-<h1>Homepage!</h1>
-
-<h2>Garages</h2>
-<p><a href="/garages">Search All Garages</a></p>
-
-<h2>Users</h2>
-<p><a href="/users">View all users</a></p>
-
-<ul>
-	<li><a href="/login_form">Log in</a></li>
-	<li><a href="/register">Register</a></li>
-</ul>
-
-<div>
-	<ul id="results"></ul>
-
-</div>
-// <script>
-// 	$(document).ready(function(){
-// 		$('#search').on('click', function(){
-// 			// calling the api route @ search
-// 			$.get('/search',{address:$('#query').val()}, function(data){
-				
-// 				var div = $("#results");
-// 				div.empty();
-// 				for(var i=0;i<data.results.length; i++) {
-// 					div.append("<li>" +  data.results[i] + "</li>");
-// 				}
-// 			})
-// 		});
-// 	});
-// previous working ajax version
-// </script>
-
+    <!--     Registration Modal -->
+      
+    <!-- <h2>Garages</h2>
+    <p><a href="/garages">Search All Garages</a></p>
+    <h2>Users</h2>
+    <p><a href="/users">View all users</a></p> -->
+    
+    <div>
+    <ul id="results"></ul>
+  </div>
+  <script>
+  //  $(document).ready(function(){
+  //    $('#search').on('click', function(){
+  //      // calling the api route @ search
+  //      $.get('/search',{address:$('#query').val()}, function(data){
+  
+  //        var div = $("#results");
+  //        div.empty();
+  //        for(var i=0;i<data.results.length; i++) {
+  //          div.append("<li>" +  data.results[i] + "</li>");
+  //        }
+  //      })
+  //    });
+  //  });
+  // previous working ajax version
+  // </script>
 {% endblock %}

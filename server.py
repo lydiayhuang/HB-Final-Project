@@ -1,22 +1,14 @@
 """ParkerSpace."""
 from jinja2 import StrictUndefined
-
 from flask import (Flask, render_template, redirect, request, flash,
-                   session, jsonify, Response)
+                   session, jsonify, Response, g)
 from flask_debugtoolbar import DebugToolbarExtension
-
 from model import User, connect_to_db, db, Parking_location, User_history, Rating
-
 import logging
-
 from geopy.geocoders import Nominatim
-
 from geopy.distance import vincenty
-
 from helper import closest_garage
-
 import geocoder
-
 
 
 
@@ -31,6 +23,9 @@ app.secret_key = "ABC"
 # error.
 app.jinja_env.undefined = StrictUndefined
 
+def check_login_status(user_id):
+    return str(session.get('logged_in', None)) == str(user_id)
+        
 
 @app.route('/')
 def index():
@@ -44,7 +39,7 @@ def user_list():
     """Show list of users."""
 
     user = User.query.all()
-
+    
     return render_template("user_list.html", user=user)
 
 
@@ -78,6 +73,11 @@ def search_list():
 @app.route("/users/<user_id>")
 def user_info(user_id):
     """Show user and ratings."""
+    print session
+    print user_id
+
+    if not check_login_status(user_id):
+        return redirect('/')
 
     user = User.query.filter(User.user_id == user_id).one()
     
@@ -86,14 +86,21 @@ def user_info(user_id):
 
     user_history = User_history.query.filter(User_history.user_id == user_id)
     rating = []
+    histories = {}
+
     for history in user_history:
         parking_location = Parking_location.query.get(history.parking_id)
-        score = Rating.query.filter(Rating.user_id == history.user_id).filter(Rating.parking_id== history.parking_id).one()
-        rating.append(dict(location=parking_location, date=history.parking_date, score=score.score))
+        score = Rating.query.filter(Rating.user_id == history.user_id).filter(Rating.parking_id== history.parking_id).first()
+        if score:
+            score = score.score
+        histories.setdefault(parking_location.address, dict(score=score, dates=[]))
+        histories[parking_location.address]['dates'].append(history.parking_date)
+        # rating.append(dict(location=parking_location, date=history.parking_date, score=score))
 
-    print rating
+    
+    print histories
     return render_template("user_detail.html", 
-                                    scores=rating,
+                                    scores=histories,
                                     user=user
                                     )
 
@@ -113,6 +120,10 @@ def user_info(user_id):
 @app.route("/garage_rating", methods=['POST'])
 def add_new_rating():
     """Add new rating to garages."""
+
+    if 'logged_in' not in session.keys():
+        return redirect('/')
+
     rating = request.form.get("rating")
     parking_id = request.form.get("parking")
     user_id = request.form.get("user")
@@ -130,6 +141,9 @@ def add_new_rating():
     db.session.commit()  
 
     return redirect('garages/' + str(parking_id))
+
+
+
 
 
 @app.route("/garages/<parking_id>")
@@ -154,6 +168,10 @@ def garage_details(parking_id):
                                     overall_rating=overall_rating,
                                     user_rating=user_rating_score) 
 
+
+
+
+
 @app.route("/map_data", methods=['GET'])
 def map_data():
     parking_locations = Parking_location.query.all()
@@ -166,6 +184,9 @@ def map_data():
 
 @app.route("/chart/<user_id>", methods=['GET'])
 def chart(user_id):
+
+    if not check_login_status(user_id):
+        return redirect('/')
 
     user_histories = User_history.query.filter(User_history.user_id == user_id)
     #creating array of 12 0's for 12 months
@@ -181,6 +202,10 @@ def chart(user_id):
 @app.route("/record_parking", methods=['POST'])
 def record_parking():
     """records parking date"""
+
+    if 'logged_in' not in session.keys():
+        return redirect('/')
+
 
     date = request.form.get("parking_date")
     parking_id = request.form.get("parking_id")
@@ -266,6 +291,9 @@ def process_form():
 @app.route('/log_out')
 def log_out():
     """Log Out"""
+
+    if 'logged_in' not in session.keys():
+        return redirect('/')
 
     del session['logged_in']
     flash('You have been logged out.')
