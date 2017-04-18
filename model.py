@@ -65,7 +65,7 @@ class User_history(db.Model):
     history_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     parking_date = db.Column(db.DateTime, nullable=True)
 
-
+    
     
 
 

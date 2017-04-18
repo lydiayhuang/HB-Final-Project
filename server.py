@@ -39,7 +39,7 @@ def user_list():
     """Show list of users."""
 
     user = User.query.all()
-    
+
     return render_template("user_list.html", user=user)
 
 
@@ -93,8 +93,10 @@ def user_info(user_id):
         score = Rating.query.filter(Rating.user_id == history.user_id).filter(Rating.parking_id== history.parking_id).first()
         if score:
             score = score.score
+
         histories.setdefault(parking_location.address, dict(score=score, dates=[]))
         histories[parking_location.address]['dates'].append(history.parking_date)
+
         # rating.append(dict(location=parking_location, date=history.parking_date, score=score))
 
     
@@ -109,11 +111,13 @@ def user_info(user_id):
 # def garage_list():
 #     """Show list of garages."""
 
+#     garage = Parking_location.query.filter(Parking_location.parking_id == parking_id).one()
+
 #     print "About to query for parking location"
 #     parking_locations = Parking_location.query.all()
     
 #     print "about to render template"
-#     return render_template("garage_list.html", parking_locations=parking_locations)
+#     return render_template("garage_list.html", garage=garage, parking_locations=parking_locations)
 
 
 
@@ -252,15 +256,15 @@ def register_process():
 
         return render_template("user_detail.html", user=new_user, scores=[])
     else:
-        flash("Email existed. Please log in instead.")
+        flash("Email exists. Please log in instead.")
         return render_template("login_form.html")
 
 
-@app.route("/login_form")
-def show_form():
-    """Login Form."""
+# @app.route("/login_form")
+# def show_form():
+#     """Login Form."""
 
-    return render_template("login_form.html")
+#     return render_template("login_form.html")
 
 
 @app.route("/login_form", methods=['POST'])
@@ -277,14 +281,14 @@ def process_form():
     # if not user or if user is None:
     if not user:
         flash('Email not recognized, please register for a new account.')
-        return render_template('registration_form.html')
+        return render_template('homepage.html')
 
     elif user.password != password:
         flash('Password is wrong, please log in again')
         return render_template('login_form.html')
     else:
         session['logged_in'] = user.user_id
-        flash('Log in successful!')
+        flash('You are now logged in!')
         return redirect('users/' + str(user.user_id))
 
 

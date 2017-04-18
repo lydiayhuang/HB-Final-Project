@@ -1,32 +1,90 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <h2>Garages</h2>
 
-<!--     <iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d12611.974921443496!2d-122.40708325!3d37.7901867!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1491619231395" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe> -->
-
+<body >
 
 
+    <div class="tooltip">Hover over me
+  <span class="tooltiptext">Tooltip text</span>
+</div>
 <div class="row">
-  <div class="col-md-10">
-    <div id="map" style="height: 800px;width=600px;"></div>
-  </div>
-  <div class="col-md-2">
+    <div class="col-md-9">
+      <div id="map" style="height: 800px;width=600px;"></div>
+    </div>
+  <div class="col-md-3">
 
-    <ul>
-      {% for parking_location in garages %}
-          <li>
+    <ul class="list-group">
+      {% for parking_location in garages|sort(attribute='dist') %}
+
+          <li id="garage-list" class="list-group-item">
               <a href="/garages/{{ parking_location.parking_id }}">
-                {{ parking_location.address}} ({{ parking_location.parking_id }}) 
-              </a>
-              {{ '%0.2f'| format(parking_location.dist|float) }} miles
 
+                Address: {{ parking_location.address}} 
+                </br>
+                Garage ID: {{ parking_location.parking_id }}
+                </br>
+              </a>
+                <b>Distance: {{ '%0.2f'| format(parking_location.dist|float) }} miles</b></br>
+                
+                <a href="https://maps.google.com/?daddr={{parking_location.latitude}},{{parking_location.longitude}}" target="blank"><button>Directions</button></a>
+                {% if 'logged_in' in session.keys()%}
+                <button type="button" id="garage-detail-button"class="btn btn-primary btn-sm " data-toggle="modal" data-target="#garageModal{{parking_location.parking_id}}">Garage Details</button>
+
+                {% else %}
+                <a><span> Login to gfjjhljkhgh</span></a>
+                {% endif %}
           </li>
       {% endfor %}
     </ul>
-
   </div>
 </div>
+{% for parking_location in garages|sort(attribute='dist') %}
+<!-- modal for garage details -->
+ <div class="modal fade" id="garageModal{{parking_location.parking_id}}" tabindex="-1" role="dialog" aria-labelledby=
+  "myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label=
+          "Close"><span aria-hidden="true">&#215;</span></button>
+
+          <h4 class="modal-title" id="myModalLabel">{{parking_location.address}} Garage Details</h4>
+        </div>
+        <div class="modal-body">
+           <form action="/garage_rating" method="POST">
+        <select name="rating">
+          <option label="1">1</option>
+          <option label="2">2</option>
+          <option label="3">3</option>
+          <option label="4">4</option>
+          <option label="5">5</option>
+        </select>
+        <input type="hidden" id="parking" name="parking" value="{{parking_location.parking_id}}">
+        {% if 'logged_in' in session.keys() %}
+
+        <input type="hidden" id="user" name="user" value="{{session['logged_in']}}">
+        {% endif %}
+        <button type="submit">Select your rating. 5 being best.</button>
+      </form>
+        </div>
+        <div class="modal-footer">
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+            <h2>Garage Details</h2>
+
+
+            
+            
+  Parking Date:
+  <input type="date" name="parking_date">
+ 
+  <button type="submit">Submit</button>
+      </div>
 
 <script>
   // var test = {{garages|safe}}
@@ -34,91 +92,136 @@
         // Styles a map in night mode.
         var map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 37.774, lng: -122.4194},
-          zoom: 13,
+          zoom: 12,
           scrollwheel: false,
           zoomControl: true,
           scaleControl: false,
-          draggable: false,
+          draggable: true,
           styles: [
-            {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
-            {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
-            {elementType: 'labels.text.fill', stylers: [{color: '#746855'}]},
+    {
+        "featureType": "administrative",
+        "elementType": "all",
+        "stylers": [
             {
-              featureType: 'administrative.locality',
-              elementType: 'labels.text.fill',
-              stylers: [{color: '#d59563'}]
-            },
-            {
-              featureType: 'poi',
-              elementType: 'labels.text.fill',
-              stylers: [{color: '#d59563'}]
-            },
-            {
-              featureType: 'poi.park',
-              elementType: 'geometry',
-              stylers: [{color: '#263c3f'}]
-            },
-            {
-              featureType: 'poi.park',
-              elementType: 'labels.text.fill',
-              stylers: [{color: '#6b9a76'}]
-            },
-            {
-              featureType: 'road',
-              elementType: 'geometry',
-              stylers: [{color: '#38414e'}]
-            },
-            {
-              featureType: 'road',
-              elementType: 'geometry.stroke',
-              stylers: [{color: '#212a37'}]
-            },
-            {
-              featureType: 'road',
-              elementType: 'labels.text.fill',
-              stylers: [{color: '#9ca5b3'}]
-            },
-            {
-              featureType: 'road.highway',
-              elementType: 'geometry',
-              stylers: [{color: '#746855'}]
-            },
-            {
-              featureType: 'road.highway',
-              elementType: 'geometry.stroke',
-              stylers: [{color: '#1f2835'}]
-            },
-            {
-              featureType: 'road.highway',
-              elementType: 'labels.text.fill',
-              stylers: [{color: '#f3d19c'}]
-            },
-            {
-              featureType: 'transit',
-              elementType: 'geometry',
-              stylers: [{color: '#2f3948'}]
-            },
-            {
-              featureType: 'transit.station',
-              elementType: 'labels.text.fill',
-              stylers: [{color: '#d59563'}]
-            },
-            {
-              featureType: 'water',
-              elementType: 'geometry',
-              stylers: [{color: '#17263c'}]
-            },
-            {
-              featureType: 'water',
-              elementType: 'labels.text.fill',
-              stylers: [{color: '#515c6d'}]
-            },
-            {
-              featureType: 'water',
-              elementType: 'labels.text.stroke',
-              stylers: [{color: '#17263c'}]
+                "saturation": "-100"
             }
-          ]
+        ]
+    },
+    {
+        "featureType": "administrative.province",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "landscape",
+        "elementType": "all",
+        "stylers": [
+            {
+                "saturation": -100
+            },
+            {
+                "lightness": 65
+            },
+            {
+                "visibility": "on"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "all",
+        "stylers": [
+            {
+                "saturation": -100
+            },
+            {
+                "lightness": "50"
+            },
+            {
+                "visibility": "simplified"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "all",
+        "stylers": [
+            {
+                "saturation": "-100"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "simplified"
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "elementType": "all",
+        "stylers": [
+            {
+                "lightness": "30"
+            }
+        ]
+    },
+    {
+        "featureType": "road.local",
+        "elementType": "all",
+        "stylers": [
+            {
+                "lightness": "40"
+            }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "elementType": "all",
+        "stylers": [
+            {
+                "saturation": -100
+            },
+            {
+                "visibility": "simplified"
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "hue": "#ffff00"
+            },
+            {
+                "lightness": -25
+            },
+            {
+                "saturation": -97
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "lightness": -25
+            },
+            {
+                "saturation": -100
+            }
+        ]
+    }
+]
         });
       
       {% for garage in garages %}

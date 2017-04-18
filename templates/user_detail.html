@@ -1,36 +1,109 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <h2>User Details</h2>
-    <h3>First Name: {{ user.first_name }}</h3>
-    <h3>Last Name: {{ user.last_name }}</h3>
-    <h3>Email: {{ user.email }}</h3>
+  <!-- <div>
+    <div class="col-md-3">
+      <ul class="list-group">
+        <li id="user-list" class="list-group-item">
+        <h2>User Details</h2>
+        <h3>First Name: {{ user.first_name }}</h3>
+        <h3>Last Name: {{ user.last_name }}</h3>
+        <h3>Email: {{ user.email }}</h3>
+      </li>
+    </ul>
+  </div> -->
     
-  
+ 
 
    
-<!--   <input type="date"/>
- --> 
+<!-- 
  <div style="width: 400px; height: 400px">
   <canvas id="myChart" width="400" height="400"></canvas>
+</div> -->
+
+<div class="container-fluid">
+  <body style="margin: 0;">
+
+
+  <div class="row">
+    <div class="col-md-4">
+      <ul class="list-group">
+        <li id="user-list" class="list-group-item">
+        <h2>User Details</h2>
+        <h3>First Name: {{ user.first_name }}</h3>
+        <h3>Last Name: {{ user.last_name }}</h3>
+        <h3>Email: {{ user.email }}</h3>
+      </li>
+    </ul>
+     <div class="col-md-3"> 
+    <div style="width: 400px; height: 400px">
+      <canvas id="myChart" width="600" height="400"></canvas>
+    </div>          
 </div>
 
- <ul>
-     
-      {% for parking_location, value in scores.iteritems() %}
-        <h2>{{ parking_location }}</h2>
-        <h4>Rating: {{ value.score }}</h4>
-        <h4>Parking Date: </h4>
+</div>
+  <div class="col-md-7">
+    <h2>Parking History</h2>
+  <p>The .table class adds basic styling (light padding and only horizontal dividers) to a table:</p> 
+    <table class="table">
+    {% if scores %}
+    {% for parking_location, value in scores.iteritems() %}
 
-        <ul>
-          {% for date in value.dates %}
-            <li> {{ date.strftime('%Y-%m-%d') }}
-            </li>
+    <thead>
+      <tr>
+        <th class="col-md-3">Garage</th>
+        <th class="col-md-3">Rating</th>
+        <th class="col-md-3">Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        
+        <td>{{ parking_location }}</td>
+        <td>{{ value.score }}</td>
        
-      {% endfor %}
-    </ul>
-    {% endfor %}
-  </ul>
+        <td>
+        {% for date in value.dates %}
+        {{ date.strftime('%Y-%m-%d') }}<br>
+        {% endfor %}
+        </td>
+        {% endfor %}
+        
+      
+      </tr>
+     
+    </tbody>
+    {% else %}
+     <thead>
+      <tr>
+        <th class="col-md-3">Garage</th>
+        <th class="col-md-3">Rating</th>
+        <th class="col-md-3">Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        
+        <td></td>
+
+        <td></td>
+       
+        <td>
+        
+        </td>
+            </tbody>
+
+        {% endif %}
+  </table>
+    
+  </div>
+  
+ 
+</div>
+</div>
+</div>
+
+
 
     
  <script type="text/javascript">
