@@ -1,103 +1,120 @@
 {% extends 'base.html' %}
 {% block content %}
-
-
-<body >
-
-
-    <div class="tooltip">Hover over me
-  <span class="tooltiptext">Tooltip text</span>
-</div>
-<div class="row">
-    <div class="col-md-9">
-      <div id="map" style="height: 800px;width=600px;"></div>
-    </div>
-  <div class="col-md-3">
-
-    <ul class="list-group">
-      {% for parking_location in garages|sort(attribute='dist') %}
-
-          <li id="garage-list" class="list-group-item">
+  <body >
+    <style>
+  body {
+  background-color: #303233
+  }
+  </style>
+    
+    <div class="row">
+      <div class="col-md-9">
+        <div id="map" style="height: 800px;width=600px;"></div>
+      </div>
+      <div class="col-md-3">
+        <ul class="list-group">
+          {% for parking_location in garages|sort(attribute='dist') %}
+            <li id="garage-list-{{loop.index}}" class="list-group-item">
               <a href="/garages/{{ parking_location.parking_id }}">
-
-                Address: {{ parking_location.address}} 
+                Address: {{ parking_location.address}}
                 </br>
                 Garage ID: {{ parking_location.parking_id }}
                 </br>
               </a>
-                <b>Distance: {{ '%0.2f'| format(parking_location.dist|float) }} miles</b></br>
-                
-                <a href="https://maps.google.com/?daddr={{parking_location.latitude}},{{parking_location.longitude}}" target="blank"><button>Directions</button></a>
-                {% if 'logged_in' in session.keys()%}
+              <b>Distance: {{ '%0.2f'| format(parking_location.dist|float) }} miles</b></br>
+              
+              <a href="https://maps.google.com/?daddr={{parking_location.latitude}},{{parking_location.longitude}}" target="blank"><button>Directions</button></a>
+              {% if 'logged_in' in session.keys()%}
                 <button type="button" id="garage-detail-button"class="btn btn-primary btn-sm " data-toggle="modal" data-target="#garageModal{{parking_location.parking_id}}">Garage Details</button>
-
-                {% else %}
-                <a><span> Login to gfjjhljkhgh</span></a>
-                {% endif %}
-          </li>
-      {% endfor %}
-    </ul>
-  </div>
-</div>
-{% for parking_location in garages|sort(attribute='dist') %}
-<!-- modal for garage details -->
- <div class="modal fade" id="garageModal{{parking_location.parking_id}}" tabindex="-1" role="dialog" aria-labelledby=
-  "myModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label=
-          "Close"><span aria-hidden="true">&#215;</span></button>
-
-          <h4 class="modal-title" id="myModalLabel">{{parking_location.address}} Garage Details</h4>
-        </div>
-        <div class="modal-body">
-           <form action="/garage_rating" method="POST">
-        <select name="rating">
-          <option label="1">1</option>
-          <option label="2">2</option>
-          <option label="3">3</option>
-          <option label="4">4</option>
-          <option label="5">5</option>
-        </select>
-        <input type="hidden" id="parking" name="parking" value="{{parking_location.parking_id}}">
-        {% if 'logged_in' in session.keys() %}
-
-        <input type="hidden" id="user" name="user" value="{{session['logged_in']}}">
-        {% endif %}
-        <button type="submit">Select your rating. 5 being best.</button>
-      </form>
-        </div>
-        <div class="modal-footer">
-          
-        </div>
+              {% else %}
+                <a href="/"><span> Login to view rating and more!</span></a>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
       </div>
     </div>
-  </div>
-  {% endfor %}
-            <h2>Garage Details</h2>
+    {% for parking_location in garages|sort(attribute='dist') %}
+      <!-- modal for garage details -->
+      <div class="modal fade" id="garageModal{{parking_location.parking_id}}" tabindex="-1" role="dialog" aria-labelledby=
+        "myModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label=
+              "Close"><span aria-hidden="true">&#215;</span></button>
+              <h4 class="modal-title" id="myModalLabel">{{parking_location.address}} Garage Details</h4>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+              <form action="/garage_rating" method="POST" class="form-inline btn btn-primary rating-form">
+                <label class="mr-md-2" for="inlineFormCustomSelect">Rating :</label>
+                  <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="inlineFormCustomSelect">
+                    <option selected>Select rating, 5 being best!</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+                <input type="hidden" id="search_address" name="search_address" value="{{search_address}}">
+                <input type="hidden" id="parking" name="parking" value="{{parking_location.parking_id}}">
 
-
-            
-            
-  Parking Date:
-  <input type="date" name="parking_date">
- 
-  <button type="submit">Submit</button>
+                <input type="hidden" id="reload" name="reload" value="True">
+                {% if 'logged_in' in session.keys() %}
+                  <input type="hidden" id="user" name="user" value="{{session['logged_in']}}">
+                {% endif %}
+                <button type="submit" class="btn btn-primary form-control">Select your rating. 5 being best.</button>
+              </form>
+              <form action="/record_parking" method="POST">
+                <input type="hidden" id="parking" name="parking_id" value="{{parking_location.parking_id}}">
+                {% if 'logged_in' in session %}
+                  <input type="hidden" id="user" name="user" value="{{session['logged_in']}}">
+                {% endif %}
+                
+                Parking Date:
+                <input type="date" class="btn btn-primary form-control" name="parking_date">
+                
+                <button type="submit" >Submit</button>
+              </form>
+              {% if parking_location.temp_userRating %}
+                <h2>User Rating: {{ parking_location.temp_userRating }}</h2>
+              {% endif %}
+              <h2>Overall Rating: {{ parking_location.temp_overallRating }}</h2>
+            </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              
+            </div>
+          </div>
+        </div>
       </div>
+    {% endfor %}
+    
+    <div id="jib">
+      Some Jibberish
+    </div>
+  {% if shouldReload %}
+  <script type="text/javascript">
+    $(window).on('load',function(){
+        $('#garageModal{{parking_id}}').modal('show');
+    });
+  </script>
+{% endif %}
 
-<script>
+  <script>
   // var test = {{garages|safe}}
-      function initMap() {
-        // Styles a map in night mode.
-        var map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: 37.774, lng: -122.4194},
-          zoom: 12,
-          scrollwheel: false,
-          zoomControl: true,
-          scaleControl: false,
-          draggable: true,
-          styles: [
+  function initMap() {
+  // Styles a map in night mode.
+  var map = new google.maps.Map(document.getElementById('map'), {
+  center: {lat: 37.774, lng: -122.4194},
+  zoom: 12,
+  scrollwheel: false,
+  zoomControl: true,
+  scaleControl: false,
+  draggable: true,
+  styles: [
     {
         "featureType": "administrative",
         "elementType": "all",
@@ -222,28 +239,79 @@
         ]
     }
 ]
-        });
-      
-      {% for garage in garages %}
-      var marker = new google.maps.Marker({
-            position: {lat:{{garage.latitude}}, lng:{{garage.longitude}} },
-            map: map,
-            title: '{{garage.address}}'
-          });
-      {% endfor %}
-      }
+  });
 
-      function clearMarkers() {
-        setMapOnAll(null);
-      }
+  
+  {% for garage in garages|sort(attribute='dist') %}
 
-      function updateMarkers () {
-        
-      }
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCtbTBgDnd4FKa6iOlY8FDO3u1R94sItZc&callback=initMap"
-    async defer></script>
-  </body>
+  {
+    let contentString = '<div><p>{{garage.address}}</p></div>'
+    let infowindow = new google.maps.InfoWindow({
+          content: contentString
+    });
+    google.maps.event.addListener(infowindow, 'closeclick', function(){
+
+        $('#garage-list-{{loop.index}}').removeClass('garage-highlight')
+    })
+    let marker = new google.maps.Marker({
+    position: {lat:{{garage.latitude}}, lng:{{garage.longitude}} },
+    map: map,
+    title: '{{garage.address}}'
+    });
+    marker.addListener('click', function() {
+          infowindow.open(map, marker);
+          $('#garage-list-{{loop.index}}').addClass('garage-highlight')
+    });
+  }
+  {% endfor %}
+  }
+  function clearMarkers() {
+  setMapOnAll(null);
+  }
+  function updateMarkers () {
+  
+  }
+  // $(document).ready(function() {
+  //   var elements = $(".rating-form");
+  //   elements.each((i, ele) => {
+  //     console.log(i, ele);
+  //     $(ele).on('submit', (event) => {
+  //       console.log(event);
+  //       $.ajax({
+  //         type: "POST",
+  //         url: "/garage_rating",
+  //         data: $("rating-form").serialize(),
+  //         success: function(data) {
+  //           $("classname").append(
+  //             '<p>' + data.message + '</p>'
+  //           );
+  //           // Just add data.message to the browser
+  //         }
+  //       });
+  //       event.preventDefault();
+  //     });
+  //   })
+  // })
+  
+  // .each(function(idx, element) {
+  // console.log(element, idx);
+  // element.submit(function(evt) {
+  
+  // $.ajax({
+  // type: "POST",
+  // url: "/garage_rating",
+  // data: $("rating-form").serialize(),
+  // success: function(data) {
+  // console.log(data)
+  // }
+  // })
+  // evt.preventDefault();
+  // console.log(evt)
+  // });
+  // });
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCtbTBgDnd4FKa6iOlY8FDO3u1R94sItZc&callback=initMap"
+  async defer></script>
+</body>
 </html>
 {% endblock %}
-

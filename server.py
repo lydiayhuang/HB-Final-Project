@@ -1,7 +1,7 @@
 """ParkerSpace."""
 from jinja2 import StrictUndefined
 from flask import (Flask, render_template, redirect, request, flash,
-                   session, jsonify, Response, g)
+                   session, jsonify, Response, g, url_for)
 from flask_debugtoolbar import DebugToolbarExtension
 from model import User, connect_to_db, db, Parking_location, User_history, Rating
 import logging
@@ -46,24 +46,48 @@ def user_list():
 @app.route("/garages")
 def search_list():
 
+    shouldReload = request.args.get('shouldReload', False) 
+    if shouldReload:
+        parking_id = request.args.get('parking_id') 
+    else:
+        parking_id = None
     address = request.args.get('address') 
-    print "Address: ", address 
+    # print "Address: ", address 
     #putting in comma will print since different datatypes cannot be concatenated 
     location = geocoder.google(address).latlng
 
-    print "Location: ", location
-    print(location[0], location[1])
-
+    # print "Location: ", location
+    
     garages = Parking_location.query.all()
-    print "Garages:", garages
+    # print "Garages:", garages
 
     results = closest_garage(garages, location)
-    print(len(results))
-    print "Restuls", results
+    # print(len(results))
+    # print "Restuls", results
     
     garage_data = [garage.address for garage in results]
+    
+
+    for garage in results:
+        user_rating_score = 0
+        if 'logged_in' in session.keys():
+            user_rating = Rating.query.filter(Rating.parking_id == garage.parking_id, Rating.user_id == session['logged_in'])
+            if user_rating.count():
+                user_rating_score = user_rating.one().score
+            garage.temp_userRating = user_rating_score
+
+        if len(garage.rating):
+            print 'rating', len(garage.rating), [rating.score if rating.score else 0 for rating in garage.rating]
+            overall_rating = float(sum(rating.score if rating.score else 0 for rating in garage.rating))/len(garage.rating)
+        else:
+            overall_rating = 0
+        garage.temp_overallRating = overall_rating
     # return jsonify(results=garage_data)
-    return render_template("garage_list.html", garages=results)
+    return render_template("garage_list.html", parking_id=parking_id, 
+                                               search_address=address, 
+                                               garages=results, 
+                                            
+                                               shouldReload= shouldReload)
 
 
 
@@ -119,7 +143,13 @@ def user_info(user_id):
 #     print "about to render template"
 #     return render_template("garage_list.html", garage=garage, parking_locations=parking_locations)
 
+# @app.route('/weather.json')
+# def weather():
+#     """Return a weather-info dictionary for this zipcode."""
 
+#     zipcode = request.args.get('zipcode')
+#     weather_info = WEATHER.get(zipcode, DEFAULT_WEATHER)
+#     return jsonify(weather_info)
 
 @app.route("/garage_rating", methods=['POST'])
 def add_new_rating():
@@ -127,16 +157,17 @@ def add_new_rating():
 
     if 'logged_in' not in session.keys():
         return redirect('/')
-
+    address = request.form.get("search_address")
     rating = request.form.get("rating")
     parking_id = request.form.get("parking")
     user_id = request.form.get("user")
+    shouldReload = bool(request.form.get("reload", False))
 
     existing_rating = (Rating.query.filter(Rating.parking_id ==parking_id,
                         Rating.user_id == user_id).first())
     if existing_rating:
         flash('You have successfully updated your rating!')
-        existing_rating.score = int(rating)
+        existing_rating.score = rating
     else:
         new_rating = Rating(parking_id=parking_id, 
                             user_id=user_id, score=rating)
@@ -144,7 +175,7 @@ def add_new_rating():
         flash('You have successfully added a new rating!')
     db.session.commit()  
 
-    return redirect('garages/' + str(parking_id))
+    return redirect(url_for('search_list', address=address, parking_id=parking_id, rating=rating, shouldReload=shouldReload))
 
 
 
@@ -157,7 +188,7 @@ def garage_details(parking_id):
     garage = Parking_location.query.filter(Parking_location.parking_id == parking_id).one()
     user_rating_score = None
 
-    if session['logged_in']:
+    if 'logged_in' in session.keys():
         user_rating = Rating.query.filter(Rating.parking_id == garage.parking_id, Rating.user_id == session['logged_in'])
         if user_rating.count():
             user_rating_score = user_rating.one().score
@@ -218,6 +249,7 @@ def record_parking():
     new_history = User_history(parking_id=parking_id, parking_date=date, user_id=user_id)
     db.session.add(new_history)
     db.session.commit()
+    flash('You have recorded this date.')
 
     # print date, parking_id, user_id
     return redirect('/users/' + str(user_id))
@@ -289,7 +321,7 @@ def process_form():
     else:
         session['logged_in'] = user.user_id
         flash('You are now logged in!')
-        return redirect('users/' + str(user.user_id))
+        return redirect("/")
 
 
 @app.route('/log_out')

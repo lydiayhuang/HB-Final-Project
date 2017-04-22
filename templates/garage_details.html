@@ -58,8 +58,10 @@
 
 <form action="/record_parking" method="POST">
   <input type="hidden" id="parking" name="parking_id" value="{{garage.parking_id}}">
+   {% if 'logged_in' in session.keys()%}
   <input type="hidden" id="user" name="user" value="{{session['logged_in']}}">
-        
+  {% endif %}
+  
   Parking Date:
   <input type="date" name="parking_date">
  
