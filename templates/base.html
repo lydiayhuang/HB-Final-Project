@@ -36,18 +36,18 @@
           {% endif %}
 
         </ul>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class=flashes id="flash">
+              {% for message in messages %}
+                <p class="navbar-text">{{ message }}</p>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
       </div>
     </nav>
 
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <ul class=flashes id="flash">
-        {% for message in messages %}
-          <p>{{ message }}</p>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
 
 
 
