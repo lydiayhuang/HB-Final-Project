@@ -152,7 +152,7 @@ def add_new_rating():
     if 'logged_in' not in session.keys():
         return redirect('/')
     address = request.form.get("search_address")
-    rating = request.form.get("rating")
+    rating = request.form.get("ratings")
     parking_id = request.form.get("parking")
     user_id = request.form.get("user")
     shouldReload = bool(request.form.get("reload", False))
