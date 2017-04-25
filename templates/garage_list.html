@@ -13,17 +13,17 @@
         <ul class="list-group">
           {% for parking_location in garages|sort(attribute='dist') %}
             <li id="garage-list-{{loop.index}}" class="list-group-item">
-              <a href="/garages/{{ parking_location.parking_id }}">
-                Address: {{ parking_location.address}}
+              <a style="color:black;" href="/garages/{{ parking_location.parking_id }}">
+                <b>Address: {{ parking_location.address}}
                 </br>
-                Garage ID: {{ parking_location.parking_id }}
+                Garage ID: {{ parking_location.parking_id }}</b>
                 </br>
               </a>
               <b>Distance: {{ '%0.2f'| format(parking_location.dist|float) }} miles</b></br>
               
-              <a href="https://maps.google.com/?daddr={{parking_location.latitude}},{{parking_location.longitude}}" target="blank"><button>Directions</button></a>
+              <a href="https://maps.google.com/?daddr={{parking_location.latitude}},{{parking_location.longitude}}" target="blank"><button class="btn btn-primary btn-sm" style="background:black;">Directions</button></a>
               {% if 'logged_in' in session.keys()%}
-                <button type="button" id="garage-detail-button"class="btn btn-primary btn-sm " data-toggle="modal" data-target="#garageModal{{parking_location.parking_id}}">Garage Details</button>
+                <button type="button" id="garage-detail-button"class="btn btn-primary btn-sm" style="background:black;" data-toggle="modal" data-target="#garageModal{{parking_location.parking_id}}">Garage Details</button>
               {% else %}
                 <a href="/"><span> Login to view rating and more!</span></a>
               {% endif %}
@@ -45,8 +45,8 @@
             </div>
             <div class="modal-body">
               <div class="form-group">
-              <form action="/garage_rating" method="POST" class="form-inline btn btn-primary rating-form modal-form">
-                <label for="inlineFormCustomSelect">Garage Rating:</label>
+              <form action="/garage_rating" method="POST" class="form-inline btn rating-form modal-form">
+                <label for="inlineFormCustomSelect" >Garage Rating:</label>
                   <select name="ratings" class="custom-select" id="inlineFormCustomSelect">
                     <option selected>5 is the best selection</option>
                     <option value="1">1</option>
@@ -62,27 +62,33 @@
                 {% if 'logged_in' in session.keys() %}
                   <input type="hidden" id="user" name="user" value="{{session['logged_in']}}">
                 {% endif %}
-                <button type="submit" class="btn btn-primary form-control">Submit</button>
+                <button type="submit" style="background:black;"class="btn btn-primary form-control">Submit</button>
               </form>
-              <form action="/record_parking" method="POST" class="form-inline btn btn-primary rating-form modal-form">
+              <form action="/record_parking" method="POST" class="form-inline btn rating-form modal-form">
                 <input type="hidden" id="parking" name="parking_id" value="{{parking_location.parking_id}}">
                 {% if 'logged_in' in session %}
                   <input type="hidden" id="user" name="user" value="{{session['logged_in']}}">
                 {% endif %}
                 
 
-                Parking Date:
-                <label>
+               
+                <label> Parking Date:
                   <input type="date" class="form-control" name="parking_date">
                 </label>
                 
                 
-                <button type="submit" class="btn btn-primary form-control">Submit</button>
+                <button type="submit" class="btn btn-primary form-control" style="background:black;">Submit</button>
               </form>
               {% if parking_location.temp_userRating %}
+              <div class="col-xs-6">
                 <h2>User Rating: {{ parking_location.temp_userRating }}</h2>
+              </div>
               {% endif %}
-              <h2>Overall Rating: {{ parking_location.temp_overallRating }}</h2>
+              <div class="col-xs-6">
+              <h2>Overall Rating: {{ parking_location.
+                temp_overallRating }}</h2>
+              </div>
+              <br><br><br>
             </div>
             </div>
             <div class="modal-footer">
@@ -248,7 +254,7 @@
   {% for garage in garages|sort(attribute='dist') %}
 
   {
-    let contentString = '<div><p>{{garage.address}}</p></div>'
+    let contentString = '<div><p><b>{{garage.address}}</b></p></div>'
     let infowindow = new google.maps.InfoWindow({
           content: contentString
 

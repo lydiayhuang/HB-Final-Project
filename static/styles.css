@@ -66,7 +66,7 @@ h1 {
    background: rgba(253, 252, 252, 0.5); 
    min-height: 350px;
    margin-bottom: 0;
-   margin-top: 100px;
+   margin-top: 150px;
    border-radius: 50px !important;
    
 }
@@ -168,6 +168,7 @@ h1 {
 
 .list-group-item {
   background-color: white;
+  padding-left: 30px
 }
 
 .white-background {
@@ -194,5 +195,22 @@ h1 {
     color: #3a3636;
     float: right;
 }
+
+#parking-history-header {
+      font-size: 100px;
+    font-weight: 100;
+}
+
+#your-profile {
+  font-size: 100px;
+  font-weight: 100;
+}
+
+#homepage-logo {
+  font-size: 100px;
+  font-weight: bold;
+}
+
+
 
 

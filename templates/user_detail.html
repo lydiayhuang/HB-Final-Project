@@ -1,151 +1,134 @@
 {% extends 'base.html' %}
 {% block content %}
-
   <!-- <div>
     <div class="col-md-3">
       <ul class="list-group">
         <li id="user-list" class="list-group-item">
-        <h2>User Details</h2>
-        <h3>First Name: {{ user.first_name }}</h3>
-        <h3>Last Name: {{ user.last_name }}</h3>
-        <h3>Email: {{ user.email }}</h3>
-      </li>
-    </ul>
-  </div> -->
+          <h2>User Details</h2>
+          <h3>First Name: {{ user.first_name }}</h3>
+          <h3>Last Name: {{ user.last_name }}</h3>
+          <h3>Email: {{ user.email }}</h3>
+        </li>
+      </ul>
+    </div> -->
     
-
-   
-<!-- 
- <div style="width: 400px; height: 400px">
-  <canvas id="myChart" width="400" height="400"></canvas>
-</div> -->
-
-<div class="container-fluid">
-  <body style="margin: 0;">
-
-
-  <div class="row">
-    <div class="col-md-4">
-      <ul class="list-group white-background">
-        <li id="user-list" class="list-group-item white-background">
-        <h2>Your Profile</h2>
-        <h3>First Name: {{ user.first_name }}</h3>
-        <h3>Last Name: {{ user.last_name }}</h3>
-        <h3>Email: {{ user.email }}</h3>
-      </li>
-    </ul>
-     <div class="col-md-4 white-background list-group-item" style="width: 100%; height: 400px" > 
-    <!-- <div > -->
-      <canvas id="myChart" width="600" height="400"></canvas>
-    <!-- </div>           -->
-</div>
-
-</div>
-  <div class="col-md-7 white-background list-group">
-
-    <h2>Parking History</h2>
-  <p>The table displays the dates and therating of the specific garage you parked at.</p> 
-
-  <div>
-    <table class="table">
     
-    <thead>
-      <tr>
-        <th class="col-xs-2">Garage</th>
-        <th class="col-xs-2">Rating</th>
-        <th class="col-xs-2">Date</th>
-      </tr>"
-    </thead>
-    <tbody>
-    {% if scores %}
-    {% for parking_location, value in scores.iteritems() %}
-      <tr>
-        
-        <td class="grow">{{ parking_location }}</td>
-        <td class="grow">{{ value.score }}</td>
-       
-        <td>
-        {% for date in value.dates %}
-        {% if date %}
-        {{ date.strftime('%Y-%m-%d') }}<br> 
-        {% endif %}
-        {% endfor %}
-        </td>
-        {% endfor %}
-        
+    <!--
+    <div style="width: 400px; height: 400px">
+      <canvas id="myChart" width="400" height="400"></canvas>
+    </div> -->
+    <div class="container-fluid">
+      <body style="margin: 0;">
+        <div class="row">
+          <div class="col-md-4">
+            <ul class="list-group white-background">
+              <li id="user-list" class="list-group-item white-background">
+                <h2 id="your-profile">Your Profile</h2>
+                <h3>First Name: {{ user.first_name }}</h3>
+                <h3>Last Name: {{ user.last_name }}</h3>
+                <h3>Email: {{ user.email }}</h3>
+              </li>
+            </ul>
+            <div class="col-md-4 white-background list-group-item" style="width: 100%; height: 400px" >
+              <!-- <div > -->
+              <canvas id="myChart" width="600" height="400"></canvas>
+              <!-- </div>           -->
+            </div>
+          </div>
+          <div class="col-md-7 white-background list-group">
+            <div class="col-md-12">
+              <h2 id="parking-history-header">Parking History</h2>
+              <p>The table displays the dates and therating of the specific garage you parked at.</p>
+            </div>
+            
+            <div class="col-xs-offset-2 col-md-8">
+              <table class="table table-hover">
+                
+                <thead>
+                  <tr>
+                    <th class="col-xs-2">Garage</th>
+                    <th class="col-xs-2">Rating</th>
+                    <th class="col-xs-2">Date</th>
+                  </tr>"
+                </thead>
+                <tbody>
+                  {% if scores %}
+                    {% for parking_location, value in scores.iteritems() %}
+                      <tr>
+                        
+                        <td class="grow">{{ parking_location }}</td>
+                        <td class="grow">{{ value.score }}</td>
+                        
+                        <td>
+                          {% for date in value.dates %}
+                            {% if date %}
+                              {{ date.strftime('%Y-%m-%d') }}<br>
+                            {% endif %}
+                          {% endfor %}
+                        </td>
+                      {% endfor %}
+                      
+                      
+                    </tr>
+                  {% else %}
+                    <tr>
+                      
+                      <td></td>
+                      <td></td>
+                      
+                      <td></td>
+                    </tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
       
-      </tr>
-    {% else %}
-      <tr>
-        
-        <td></td>
-
-        <td></td>
-       
-        <td></td>
-      </tr>
-
-        {% endif %}
-    </tbody>
-  </table>
+      
     </div>
   </div>
 </div>
-  
- 
-</div>
-</div>
-</div>
+
+<script type="text/javascript">
+var user_id = {{ user.user_id }}
 
 
-
-    
- <script type="text/javascript">
-  var user_id = {{ user.user_id }}
-  
-
-  
 $.get('/chart/' + user_id, function(chartData){
-  var data = {
-      labels: ["January", "February", "March", "April", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"],
-      datasets: [
-          {
-              label: "Parking History",
-              backgroundColor: [
-                  'rgba(0, 0, 0, 1)',
-                  'rgba(0, 0, 0, 1)',
-                  'rgba(0, 0, 0, 1)',
-                  'rgba(0, 0, 0, 1)',
-                  'rgba(0, 0, 0, 1)',
-                  'rgba(0, 0, 0, 1)'
-              ],
-              borderColor: [
-                  'rgba(255,99,132,1)',
-                  'rgba(54, 162, 235, 1)',
-                  'rgba(255, 206, 86, 1)',
-                  'rgba(75, 192, 192, 1)',
-                  'rgba(153, 102, 255, 1)',
-                  'rgba(255, 159, 64, 1)'
-              ],
-              borderWidth: 1,
-              data: chartData.data,
-          }
-      ]
-  };
-  
-  var myBarChart = new Chart("myChart", {
-    type: 'bar',
-    data: data,
-    options:  {}  
-    
-  });
+var data = {
+labels: ["January", "February", "March", "April", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"],
+datasets: [
+{
+label: "Parking History",
+backgroundColor: [
+'rgba(0, 0, 0, 1)',
+'rgba(0, 0, 0, 1)',
+'rgba(0, 0, 0, 1)',
+'rgba(0, 0, 0, 1)',
+'rgba(0, 0, 0, 1)',
+'rgba(0, 0, 0, 1)'
+],
+borderColor: [
+'rgba(255,99,132,1)',
+'rgba(54, 162, 235, 1)',
+'rgba(255, 206, 86, 1)',
+'rgba(75, 192, 192, 1)',
+'rgba(153, 102, 255, 1)',
+'rgba(255, 159, 64, 1)'
+],
+borderWidth: 1,
+data: chartData.data,
+}
+]
+};
 
+var myBarChart = new Chart("myChart", {
+type: 'bar',
+data: data,
+options:  {}
+
+});
 })
-
- </script>
-
-
+</script>
 {% endblock %}
-
-
-
