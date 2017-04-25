@@ -13,12 +13,6 @@
     </ul>
   </div> -->
     
- <script src="http://d3js.org/d3.v3.js"></script>
-     <div id="chart"></div> 
-    <script src="{{url_for('static',filename='d3.layout.chord.sort.js')}}"></script>
-        <script src="{{url_for('static',filename='d3.stretched.chord.js')}}"></script>
-            <script src="{{url_for('static',filename='script.js')}}"></script>
-
 
    
 <!-- 
@@ -32,76 +26,71 @@
 
   <div class="row">
     <div class="col-md-4">
-      <ul class="list-group">
-        <li id="user-list" class="list-group-item">
-        <h2>User Details</h2>
+      <ul class="list-group white-background">
+        <li id="user-list" class="list-group-item white-background">
+        <h2>Your Profile</h2>
         <h3>First Name: {{ user.first_name }}</h3>
         <h3>Last Name: {{ user.last_name }}</h3>
         <h3>Email: {{ user.email }}</h3>
       </li>
     </ul>
-     <div class="col-md-3"> 
-    <div style="width: 400px; height: 400px">
+     <div class="col-md-4 white-background list-group-item" style="width: 100%; height: 400px" > 
+    <!-- <div > -->
       <canvas id="myChart" width="600" height="400"></canvas>
-    </div>          
+    <!-- </div>           -->
 </div>
 
 </div>
-  <div class="col-md-7">
+  <div class="col-md-7 white-background list-group">
+
     <h2>Parking History</h2>
-  <p>The .table class adds basic styling (light padding and only horizontal dividers) to a table:</p> 
-    <table class="table">
-    {% if scores %}
-    {% for parking_location, value in scores.iteritems() %}
+  <p>The table displays the dates and therating of the specific garage you parked at.</p> 
 
+  <div>
+    <table class="table">
+    
     <thead>
       <tr>
-        <th class="col-md-3">Garage</th>
-        <th class="col-md-3">Rating</th>
-        <th class="col-md-3">Date</th>
-      </tr>
+        <th class="col-xs-2">Garage</th>
+        <th class="col-xs-2">Rating</th>
+        <th class="col-xs-2">Date</th>
+      </tr>"
     </thead>
     <tbody>
+    {% if scores %}
+    {% for parking_location, value in scores.iteritems() %}
       <tr>
         
-        <td>{{ parking_location }}</td>
-        <td>{{ value.score }}</td>
+        <td class="grow">{{ parking_location }}</td>
+        <td class="grow">{{ value.score }}</td>
        
         <td>
         {% for date in value.dates %}
-        {{ date.strftime('%Y-%m-%d') }}<br>
+        {% if date %}
+        {{ date.strftime('%Y-%m-%d') }}<br> 
+        {% endif %}
         {% endfor %}
         </td>
         {% endfor %}
         
       
       </tr>
-     
-    </tbody>
     {% else %}
-     <thead>
-      <tr>
-        <th class="col-md-3">Garage</th>
-        <th class="col-md-3">Rating</th>
-        <th class="col-md-3">Date</th>
-      </tr>
-    </thead>
-    <tbody>
       <tr>
         
         <td></td>
 
         <td></td>
        
-        <td>
-        
-        </td>
-            </tbody>
+        <td></td>
+      </tr>
 
         {% endif %}
+    </tbody>
   </table>
-    
+    </div>
   </div>
+</div>
   
  
 </div>
@@ -121,14 +110,14 @@ $.get('/chart/' + user_id, function(chartData){
       labels: ["January", "February", "March", "April", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"],
       datasets: [
           {
-              label: "My First dataset",
+              label: "Parking History",
               backgroundColor: [
-                  'rgba(255, 99, 132, 0.2)',
-                  'rgba(54, 162, 235, 0.2)',
-                  'rgba(255, 206, 86, 0.2)',
-                  'rgba(75, 192, 192, 0.2)',
-                  'rgba(153, 102, 255, 0.2)',
-                  'rgba(255, 159, 64, 0.2)'
+                  'rgba(0, 0, 0, 1)',
+                  'rgba(0, 0, 0, 1)',
+                  'rgba(0, 0, 0, 1)',
+                  'rgba(0, 0, 0, 1)',
+                  'rgba(0, 0, 0, 1)',
+                  'rgba(0, 0, 0, 1)'
               ],
               borderColor: [
                   'rgba(255,99,132,1)',

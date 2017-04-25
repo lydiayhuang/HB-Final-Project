@@ -1,12 +1,10 @@
-"""ParkerSpace."""
+"""ParkerSF."""
 from jinja2 import StrictUndefined
 from flask import (Flask, render_template, redirect, request, flash,
-                   session, jsonify, Response, g, url_for)
+                   session, jsonify, Response, url_for)
 from flask_debugtoolbar import DebugToolbarExtension
 from model import User, connect_to_db, db, Parking_location, User_history, Rating
 import logging
-from geopy.geocoders import Nominatim
-from geopy.distance import vincenty
 from helper import closest_garage
 import geocoder
 import math
@@ -45,26 +43,18 @@ def user_list():
 
 @app.route("/garages")
 def search_list():
+    """Search closes garage to destination."""
 
     shouldReload = request.args.get('shouldReload', False) 
     if shouldReload:
         parking_id = request.args.get('parking_id') 
     else:
         parking_id = None
+
     address = request.args.get('address') 
-    # print "Address: ", address 
-    #putting in comma will print since different datatypes cannot be concatenated 
     location = geocoder.google(address).latlng
-
-    # print "Location: ", location
-    
     garages = Parking_location.query.all()
-    # print "Garages:", garages
-
     results = closest_garage(garages, location)
-    # print(len(results))
-    # print "Restuls", results
-    
     garage_data = [garage.address for garage in results]
     
 
@@ -227,62 +217,63 @@ def chart(user_id):
     if not check_login_status(user_id):
         return redirect('/')
 
-    user_histories = User_history.query.filter(User_history.user_id == user_id)
+    user_histories = User_history.query.filter(User_history.user_id == user_id).all()
     #creating array of 12 0's for 12 months
     data = [0]*12
     for history in user_histories:
-        month = history.parking_date.month 
-        #index starts from 0 so we are subtracting 1
-        data[month-1]+= 1
-        # print history.parking_date
-    return jsonify(data=data)
-
-
-@app.route("/d3chart/<user_id>", methods=['GET'])
-def d3chart(user_id):
-
-    if not check_login_status(user_id):
-        return redirect('/')
-
-    user_histories = User_history.query.filter(User_history.user_id == user_id)
-    unq_parking_location = []
-    addresses = []
-    for history in user_histories:
-        location = Parking_location.query.get(history.parking_id)
-        if history.parking_id not in unq_parking_location:
-            unq_parking_location.append(history.parking_id)
-            addresses.append(location.address)
-    
-    matrix_length = 12+1+len(unq_parking_location)+1
-    print(unq_parking_location)
-    print(addresses)
-    # matrix = [[0 for x in range(matrix_length)] for y in range(matrix_length)] 
-    
-    matrix = []
-    for id in unq_parking_location:
-        user_histories = User_history.query.filter(User_history.parking_id == id, User_history.user_id == user_id)
-        data = [0]*matrix_length
-        for history in user_histories:
+        if history.parking_date:
             month = history.parking_date.month 
             #index starts from 0 so we are subtracting 1
             data[month-1]+= 1
-        matrix.append(data)
-    empty_stroke = 0
+            # print history.parking_date
+    return jsonify(data=data)
+
+
+# @app.route("/d3chart/<user_id>", methods=['GET'])
+# def d3chart(user_id):
+
+#     if not check_login_status(user_id):
+#         return redirect('/')
+
+#     user_histories = User_history.query.filter(User_history.user_id == user_id)
+#     unq_parking_location = []
+#     addresses = []
+#     for history in user_histories:
+#         location = Parking_location.query.get(history.parking_id)
+#         if history.parking_id not in unq_parking_location:
+#             unq_parking_location.append(history.parking_id)
+#             addresses.append(location.address)
     
-    for line in matrix:
-        empty_stroke += sum(line)
+#     matrix_length = 12+1+len(unq_parking_location)+1
+#     print(unq_parking_location)
+#     print(addresses)
+#     # matrix = [[0 for x in range(matrix_length)] for y in range(matrix_length)] 
+    
+#     matrix = []
+#     for id in unq_parking_location:
+#         user_histories = User_history.query.filter(User_history.parking_id == id, User_history.user_id == user_id)
+#         data = [0]*matrix_length
+#         for history in user_histories:
+#             month = history.parking_date.month 
+#             #index starts from 0 so we are subtracting 1
+#             data[month-1]+= 1
+#         matrix.append(data)
+#     empty_stroke = 0
+    
+#     for line in matrix:
+#         empty_stroke += sum(line)
 
-    rMatrix = []
-    for line in matrix:
-        rMatrix.append(line[13:] + line[:13])
+#     rMatrix = []
+#     for line in matrix:
+#         rMatrix.append(line[13:] + line[:13])
 
-    matrix.append([0]*(matrix_length-1)+[math.floor(empty_stroke*.1)])
-    rMatrix.append([0]*12 + [math.floor(empty_stroke*.1)] + [0]*(matrix_length - 13))
+#     matrix.append([0]*(matrix_length-1)+[math.floor(empty_stroke*.1)])
+#     rMatrix.append([0]*12 + [math.floor(empty_stroke*.1)] + [0]*(matrix_length - 13))
 
-    print(matrix + rMatrix)
-    return jsonify(data=matrix + rMatrix,
-                    names=addresses, 
-                    respondents=empty_stroke)
+#     print(matrix + rMatrix)
+#     return jsonify(data=matrix + rMatrix,
+#                     names=addresses, 
+#                     respondents=empty_stroke)
 
 
 @app.route("/record_parking", methods=['POST'])

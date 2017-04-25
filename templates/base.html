@@ -8,12 +8,23 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="{{url_for('static',filename='styles.css')}}">
+
   </head>
+    <style>
+
+  body {
+  background-image: url("{{url_for('static', filename='3cars.jpg')}}");
+  background-size: cover;
+  background-repeat: no-repeat;
+  
+
+  }
+  </style>
   <body>
     <nav id="navbar" class="navbar navbar-inverse">
       <div class="container-fluid">
         <div class="navbar-header">
-          <a class="navbar-brand" id="Logo" href="/">ParkerSF</a>
+          <a class="navbar-brand navbar-btn" id="Logo" href="/">ParkerSF</a>
         </div>
 
         <ul class="nav navbar-nav">
@@ -28,10 +39,10 @@
           {% if 'logged_in' in session %}
           <li>
             <form method="get" action="/log_out">
-              <button id="logout-button" type="submit" class="btn btn-primary btn-lg">Logout</button>
+              <button id="logout-button" type="submit" class="btn btn-primary btn-lg navbar-btn navbar-right">Logout</button>
             </form>
-          </li>
-              <a href="/users/{{ session['logged_in'] }}" id="details">Your Details</a>
+          </li class="navbar-right navbar-btn">
+              <a href="/users/{{ session['logged_in'] }}" id="details" class="navbar-btn">Your Profile Page</a>
 
           {% endif %}
 

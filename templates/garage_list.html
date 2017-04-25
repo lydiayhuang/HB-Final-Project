@@ -1,11 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
-  <body >
-    <style>
-  body {
-  background-color: #303233
-  }
-  </style>
+ 
+
+
+
     
     <div class="row">
       <div class="col-md-9">
@@ -47,10 +45,10 @@
             </div>
             <div class="modal-body">
               <div class="form-group">
-              <form action="/garage_rating" method="POST" class="form-inline btn btn-primary rating-form">
-                <label class="mr-md-2" for="inlineFormCustomSelect">Rating :</label>
-                  <select class="custom-select mb-2 mr-sm-2 mb-sm-0" id="inlineFormCustomSelect">
-                    <option selected>Select rating, 5 being best!</option>
+              <form action="/garage_rating" method="POST" class="form-inline btn btn-primary rating-form modal-form">
+                <label for="inlineFormCustomSelect">Garage Rating:</label>
+                  <select class="custom-select" id="inlineFormCustomSelect">
+                    <option selected>5 is the best selection</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -64,18 +62,22 @@
                 {% if 'logged_in' in session.keys() %}
                   <input type="hidden" id="user" name="user" value="{{session['logged_in']}}">
                 {% endif %}
-                <button type="submit" class="btn btn-primary form-control">Select your rating. 5 being best.</button>
+                <button type="submit" class="btn btn-primary form-control">Submit</button>
               </form>
-              <form action="/record_parking" method="POST">
+              <form action="/record_parking" method="POST" class="form-inline btn btn-primary rating-form modal-form">
                 <input type="hidden" id="parking" name="parking_id" value="{{parking_location.parking_id}}">
                 {% if 'logged_in' in session %}
                   <input type="hidden" id="user" name="user" value="{{session['logged_in']}}">
                 {% endif %}
                 
+
                 Parking Date:
-                <input type="date" class="btn btn-primary form-control" name="parking_date">
+                <label>
+                  <input type="date" class="form-control" name="parking_date">
+                </label>
                 
-                <button type="submit" >Submit</button>
+                
+                <button type="submit" class="btn btn-primary form-control">Submit</button>
               </form>
               {% if parking_location.temp_userRating %}
                 <h2>User Rating: {{ parking_location.temp_userRating }}</h2>
@@ -239,6 +241,7 @@
         ]
     }
 ]
+
   });
 
   
@@ -248,22 +251,29 @@
     let contentString = '<div><p>{{garage.address}}</p></div>'
     let infowindow = new google.maps.InfoWindow({
           content: contentString
-    });
-    google.maps.event.addListener(infowindow, 'closeclick', function(){
 
+      });
+    console.log('infowindow:');
+    console.log(infowindow);
+
+    google.maps.event.addListener(infowindow, 'closeclick', function(){
+        console.log('where am i')
         $('#garage-list-{{loop.index}}').removeClass('garage-highlight')
-    })
+      })
     let marker = new google.maps.Marker({
     position: {lat:{{garage.latitude}}, lng:{{garage.longitude}} },
     map: map,
     title: '{{garage.address}}'
-    });
+      });
     marker.addListener('click', function() {
           infowindow.open(map, marker);
-          $('#garage-list-{{loop.index}}').addClass('garage-highlight')
-    });
+          console.log($('#garage-list-{{loop.index}}'));
+          $('#garage-list-{{loop.index}}').addClass('garage-highlight');
+          console.log($('#garage-list-{{loop.index}}'));
+      });
   }
   {% endfor %}
+  
   }
   function clearMarkers() {
   setMapOnAll(null);

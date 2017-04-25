@@ -5,11 +5,9 @@
 
 }
 
-.garage-highlight {
-  background-color: #af9999;
-}
 
 
+/*
     line {
       stroke: #000;
       stroke-width: 1.px;
@@ -25,7 +23,7 @@
 
     path.chord {
       fill-opacity: .80;
-    }
+    }*/
 
   .navbar-inverse .navbar-text {
     color: #ffffff;
@@ -36,6 +34,14 @@
 	font-size: 20px;
 	
 
+}
+
+.modal-form{
+  margin:10px 0;
+}
+
+.rating-form {
+  width: 100%;
 }
 
 
@@ -50,16 +56,18 @@ h1 {
 
 .jumbotron p {
 	font-size: 30px;
+
 	
 }
 
 
 .jumbotron {
    background: rgb(200, 54, 54); 
-   background: rgba(253, 252, 252, 0.7); 
-   min-height: 400px;
+   background: rgba(253, 252, 252, 0.5); 
+   min-height: 350px;
    margin-bottom: 0;
-   margin-top: 140px;
+   margin-top: 100px;
+   border-radius: 50px !important;
    
 }
 
@@ -74,44 +82,6 @@ h1 {
 
 }
 
-.tooltip {
-    position: relative;
-    display: inline-block;
-    border-bottom: 1px dotted black;
-}
-
-.tooltip .tooltiptext {
-    visibility: hidden;
-    width: 120px;
-    background-color: #555;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-    position: absolute;
-    z-index: 1;
-    bottom: 125%;
-    left: 50%;
-    margin-left: -60px;
-    opacity: 0;
-    transition: opacity 1s;
-}
-
-.tooltip .tooltiptext::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: #555 transparent transparent transparent;
-}
-
-.tooltip:hover .tooltiptext {
-    visibility: visible;
-    opacity: 1;
-}
 
 
 #Logo {
@@ -160,15 +130,57 @@ h1 {
 }
 
 #logout-button {
-	position: auto;
-	top: 0;
-	right: 1;
-	margin-left: 5px;
-	margin-right: 5px;
-	float: right;
-	background-color: #4d4e4e;
-   	border-color: #4d4e4e
+  position: auto;
+  top: 0;
+  right: 1;
+  margin-left: 5px;
+  margin-right: 5px;
+  float: right;
+  background-color: #4d4e4e;
+    border-color: #4d4e4e
+}
 
+#logout-button:hover {
+  background-color: #6C6A6A;
+}
+
+
+
+
+
+.navbar {
+   background: rgba(178, 178, 178, 0.6);
+   border-color: transparent;
+   opacity: 0.8;
+ 
+}
+
+.navbar li { color: #000 } 
+
+
+}
+
+
+
+.table {
+  background-color: white;
+}
+
+.list-group-item {
+  background-color: white;
+}
+
+.white-background {
+  background: white;
+  border-radius: 5px;
+}
+
+#inlineFormCustomSelect {
+  color: black;
+}
+
+.garage-highlight {
+  background-color: #a0a09a;
 }
 
 #details {
@@ -177,20 +189,10 @@ h1 {
     right: 1;
     margin-left: 5px;
     margin-right: 5px;
+    font: helvetica;
+    font-size: 200%;
+    color: #3a3636;
     float: right;
-    color: #fff;
-    font-size: 20px;
-    padding-top: 13px;
-    padding-left: 29px;
 }
-
-.navbar {
-   background: rgba(178, 178, 178, 0.4);
-   border-color: transparent;
-   opacity: 0.8;
- 
-}
-
-.navbar li { color: #000 } 
 
 
