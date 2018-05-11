@@ -1,8 +1,7 @@
-# HB-Final-Project
+# ParkerSF
 
-Staycation analyzes a user's food and activity preferences and plans a night out for them in San Francisco. The catch? The user's destinations are a surprise! Using the Twilio API to guide users based on their responses to text updates, users are taken to a restaurant and a post-dinner activity, both chosen using the Yelp API and curated to be within the user's tastes, food preferences, and interests. Features include a "Get Up and Go Button" that orders a Lyft for the user to take them to their first surprise destination right away, and a unique matching algorithm to allow users to join other trips.
 
-![alt text](https://media.giphy.com/media/xUNd9XakuIsjqTHWak/giphy.gif "Homepage")
+Parker SF relieves anyone trying to find parking in the bustling city of SF. ParkerSF will take in a user input location and return 10 sorted closest parking garages near the destination. The locations of the garages are return as markers on a Google map linking to the garages displayed in the side bar. The map feature provides users a visualization of how far the garage is from the destination, allowing the user to select the most convenient garage possible. In addition, this application also allows the user to compare the ratings of every garage to select the best garage available as well as a chart and table to visualize the user’s past parking history.
 
 ### Technology Stack:
 
@@ -14,17 +13,21 @@ Staycation analyzes a user's food and activity preferences and plans a night out
 + Python Libraries: Passlib  
 + PostgreSQL  
 + SQLAlchemy
++ Python Geocoder
 
 #### Frontend:
 
-+ React
++ Javascript
++ Jinja2
++ jQuery
++ Ajax
++ HTML5
++ CSS
 
 #### APIs:
 
-+ Yelp  
-+ Lyft  
-+ Twilio  
-+ Google Maps  
++ Google Maps
++ Chart.js 
 
 
 ## Overview & Features
@@ -59,15 +62,14 @@ Over on the user profile, I've used the Google Maps API to display the user's pa
 
 
 ### Database Model
-I modeled my database using SQL, SQLAlchemy, and OO  
-![alt text](https://github.com/chinevalerie/hb-final-project/blob/master/static/img/chine_db_relationships.png "DB Model")
+I modeled my database using SQL, SQLAlchemy
 
-## Run Staycation SF on your machine
+## Run ParkerSF on your machine
 
 First, clone or fork this repo:
 ```
-git clone https://github.com/chinevalerie/staycation-sf-backend.git
-cd staycation-sf-backend
+git clone https://github.com/lydiayhuang/HB-Final-Project.git
+cd HB-Final-Project
 ```
 Create and activate a virtual environment:
 ```
@@ -78,14 +80,14 @@ Install the dependencies:
 ```
 pip install -r requirements.txt
 ```
-Get API keys from Yelp, Lyft, and Twilio, as well as a Gmail username and password to use to send confirmation emails. Store this info in a file called secrets.sh  
+Use Gmail username and password to use to send confirmation emails. Store this info in a file called secrets.sh  
 Source secret keys:  
 ```
 source secrets.sh
 ```
-If you have PostgreSQL on your machine, create a database called hb-project and run the seed file:
+If you have PostgreSQL on your machine, create a database called parking_location and run the seed file:
 ```
-createdb hb-project  
+createdb parking_location 
 python seed.py
 ```
 
