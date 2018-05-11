@@ -45,10 +45,10 @@ When ParkerSF first loads, the homepage displays a simple search bar for garage 
 #### Geocoding & searching
 The user provides a starting location and routing profile for the search query.
 
-For a starting location, the user can input an address which is translated to latitude/longitude coordinates using the Google Maps API or chose to use their current location, which is filled in to the search form using the HTML5 geolocation API. The user also specifies timing and routing conditions, which are posted to the server with their starting coordinates.
+For a starting location, the user can input an address which is translated to latitude/longitude coordinates using the Pythong Geocoder, The user will then be populated into the next page which shows results of the exact parking garage locations, in which the map markers are linked up onto the sidebar address.
 
 #### Server-side logic
-To make the final distances API call more efficient, the database is first queried for garages that fall within a bounding search from nearest garage to furthest. The server then calls a method on these Garage objects to create GeoJSON objects for each garage that meets this criteria. Finally the Python Geocoder API is used to calculate the travel time to each of those parks based on the user’s specified routing profile. The GeoJSON objects are updated with this value and loaded onto a new page that renders a new map layer for garages.
+To make the final distances API call more efficient, the database is first queried for garages that fall within a bounding search from nearest garage to furthest. The server then calls a method on these Garage objects to create GeoJSON objects for each garage that meets this criteria. Finally the Python Geocoder API is used to calculate the travel time to each of those garages based on the user’s specified routing profile. 
 
 
 
