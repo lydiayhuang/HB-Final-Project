@@ -39,28 +39,22 @@ Parker SF relieves anyone trying to find parking in the bustling city of SF. Par
 ### Password Authentification
 Users must log in to use app features. Clicking the Get Started button triggers a modal window. I'm encrypting and hashing the entered passwords using the Python library Passlib, and then comparing that to the user's encrypted/hashed password that is stored in the Postgres database. If the passwords match up, the user gets a JSON Web Token is redirected to their profile.  
 
-### Get Up and Go
+### How it works
+When SFparks first loads, the homepage displays all parks and open spaces queried from the database. If a user is logged in, their favorite parks will also be mapped.
 
-Clicking the Get Up and Go button triggers a modal window that asks if the user would like to order a Lyft 
+![Homepage](/static/img/homepage.png)
 
-Once the user makes their decision, an AJAX POST request gets sent to the server and a few things happen over on the server-side: The app uses SQLAlchemy to query the database for the user's stored preferences, and then uses those preferences to make two API calls to Yelp (one to get all applicable restaurants, and one to get all applicable activities). It then removes any locations that the user has already been to while using the app, picks a random choice from the remaining destinations (using the Python library Random). If the user is getting a Lyft, it stores the coordinates of the first destination in the session. It then sends a confirmation email to the user using Flask Mail. The callback function of the AJAX request updates the HTML in the modal window.  
+#### Geocoding & searching
+The user provides a starting location and routing profile for the search query.
 
+For a starting location, the user can input an address which is translated to latitude/longitude coordinates using the Mapbox geocoding API or chose to use their current location, which is filled in to the search form using the HTML5 geolocation API. The user also specifies timing and routing conditions, which are posted to the server with their starting coordinates.
 
-The user can use their current location if their browser supports geolocation, or enter their address. This uses the user's location and the destination coordinates stored in the session to send a request to the Lyft API to get an estimate on how much a Lyft ride to the first surprise detination would cost. If the user decides to order the Lyft, they'll be taken over to Lyft to authorize access to their Lyft account, and then their Lyft will be on its way!
+![Search](/static/img/search.png)
 
+#### Server-side logic
+To make the final distances API call less 'expensive', the database is first queried for parks that fall within a bounding box-based heuristic based on average walking and cycling speeds. The server then calls a method on these Park objects to create GeoJSON objects for each park that meets this criteria. Finally the Mapbox distance API is used to calculate the travel time to each of those parks based on the user’s specified routing profile. The GeoJSON objects are updated with this value and loaded onto a new page that renders a new map layer for parks that are within the travel time + routing profile determined by the user.
 
-### Planning Trips
-Users can also plan a trip for a later date using a sliding form that I created using jQuery. They enter what neighborhood they want to go to, how much they want to spend, and what type of food they want to eat and the API calls to Yelp will use those specific parameters instead of the user's stored preferences
-
-
-### Trip Tracker
-Once a trip begins, users have access to an interactive Trip Tracker that I've implemented using the Twilio API. The user can text the Trip Tracker to get the address or name of their next destination. In the development process, I used an ngrok tunnel to allow for Twilio to redirect the incoming texts as POST requests to my local Flask server.  
-
-
-### Joining a Trip
-I created a matching algorithm to find users with open trips who also have similar tastes and preferences. I've ranked each matched user from most similar to least, and users can swipe through to join an interesting user's trip. I added the swiping animation using jQuery, and designed the cards using Bootstrap.  
-
-
+![Search](/static/img/results.png)
 ### User Profile
 Over on the user profile, I've used the Google Maps API to display the user's past destinations using emoji map markers. (I wrote a Javascript function to randomly select each emoji to use for the map marker). Each map marker also displays an info window on mouseover. The info window displays the name of the destination, an image from Yelp, and a link to its Yelp page. (All of that info is stored in my Postgres database, and passed over the client side with JSON).  
 
