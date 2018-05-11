@@ -2,6 +2,8 @@
 
 Deployed using AWS LightSail http://54.70.254.58/
 
+# Introduction
+
 Parker SF relieves anyone trying to find parking in the bustling city of SF. ParkerSF will take in a user input location and return 10 sorted closest parking garages near the destination. The locations of the garages are return as markers on a Google map linking to the garages displayed in the side bar. The map feature provides users a visualization of how far the garage is from the destination, allowing the user to select the most convenient garage possible. In addition, this application also allows the user to compare the ratings of every garage to select the best garage available as well as a chart and table to visualize the user’s past parking history.
 
 ### Technology Stack:
@@ -98,5 +100,5 @@ Run the server:
 python server.py
 ```
 Navigate to localhost:5000 in your browser and use these account credentials to get started right away (or go through the registration flow and create your own account):  
-email: porterleon@example.org  
-password: @VZDTeoS$0
+email: phil@phil.com
+password: 1234
